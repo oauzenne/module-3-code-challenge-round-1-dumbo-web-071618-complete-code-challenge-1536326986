@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const likeURL = `https://randopic.herokuapp.com/likes/`
   const commentsURL = `https://randopic.herokuapp.com/comments/`
   const image = document.getElementById("image")
+  const imageName = document.getElementById('name')
   const likes = document.getElementById("likes")
   const like_button = document.getElementById("like_button")
   const commentForm = document.getElementById("comment_form")
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
       comments.prepend(createComment(comment))
     })
     likes.innerText = data.like_count
+    imageName.innerText = data.name
   })//end fetch
 
   like_button.addEventListener('click',() => {
