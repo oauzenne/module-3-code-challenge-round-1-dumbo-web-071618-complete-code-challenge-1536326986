@@ -9,20 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const like_button = document.getElementById("like_button")
   const commentForm = document.getElementById("comment_form")
   const comments = document.getElementById("comments")
+  const commentInput = document.getElementById("comment_input")
 
   fetch(`${imageURL}`)
   .then(res=> res.json())
-  .then(data => {image.setAttribute("src",`${data.url}`)
-  data.comments.sort(function(a, b){return b.id - a.id}).forEach((comment)=> {
-    let new_comment = document.createElement('li')
-    new_comment.innerText =comment.content
-    let delete_button = document.createElement('button')
-    delete_button.dataset.id = comment.id
-    delete_button.innerText ="delete comment"
-    new_comment.append(delete_button)
-    comments.prepend(new_comment)
-  })
-  likes.innerText = data.like_count
+  .then(data => {
+    image.setAttribute("src",`${data.url}`)
+    data.comments.sort(function(a, b){return b.id - a.id}).forEach((comment)=> {
+      comments.prepend(createComment(comment))
+    })
+    likes.innerText = data.like_count
   })//end fetch
 
   like_button.addEventListener('click',() => {
@@ -40,10 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   commentForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    commentInput = document.getElementById("comment_input")
-
-    let new_comment = document.createElement('li')
-    new_comment.innerText = commentInput.value
 
     fetch(`${commentsURL}`, {
       method: "POST",
@@ -55,12 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
       })
     }).then(res => res.json())
     .then(comment => {
-    let delete_button = document.createElement('button')
-    delete_button.dataset.id = comment.id
-    delete_button.innerText ="delete comment"
-    new_comment.append(delete_button)
+    comments.append(createComment(comment))
     })
-    comments.append(new_comment)
     commentForm.reset()
   })
 
@@ -75,6 +63,18 @@ comments.addEventListener('click', () => {
     }
 })
 
-
-
 })//end DOM content loaded
+
+function createDeleteButton(comment){
+  let delete_button = document.createElement('button')
+  delete_button.dataset.id = comment.id
+  delete_button.innerText ="delete comment"
+  return delete_button
+}
+
+function createComment(comment_data){
+  let new_comment = document.createElement('li')
+  new_comment.innerText = comment_data.content
+  new_comment.append(createDeleteButton(comment_data))
+  return new_comment
+}
